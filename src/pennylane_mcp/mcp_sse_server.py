@@ -84,7 +84,11 @@ async def sse_endpoint(request: Request):
         }
     )
 
-
+@app.post("/")
+async def handle_message_root(request: Request):
+    """Handle MCP Streamable HTTP transport at root."""
+    return await handle_message(request)
+    
 @app.post("/message")
 async def handle_message(request: Request):
     """Handle MCP JSON-RPC messages."""
