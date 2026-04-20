@@ -273,16 +273,16 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> str:
                                                      page=arguments.get("page", 1))
         
         elif name == "pennylane_upload_file_attachment":
-        result = await attachments.upload_file_attachment(pennylane_client, **arguments)
+             result = await attachments.upload_file_attachment(pennylane_client, **arguments)
 
         elif name == "pennylane_import_customer_invoice":
-        result = await invoices.import_customer_invoice(pennylane_client, **arguments)
+             result = await invoices.import_customer_invoice(pennylane_client, **arguments)
 
         elif name == "pennylane_import_supplier_invoice":
-        result = await suppliers.import_supplier_invoice(pennylane_client, **arguments)
+             result = await suppliers.import_supplier_invoice(pennylane_client, **arguments)
 
         elif name == "pennylane_create_invoice_from_quote":
-        result = await quotes.create_invoice_from_quote(pennylane_client, **arguments)
+             result = await quotes.create_invoice_from_quote(pennylane_client, **arguments)
         
         else:
             return json.dumps({"error": f"Unknown tool: {name}"})
