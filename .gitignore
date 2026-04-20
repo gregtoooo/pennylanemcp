@@ -1,0 +1,24 @@
+# ===== SECRETS =====
+.env
+.env.local
+.env.*.local
+
+# ===== PYTHON =====
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# ===== LOGS =====
+*.log
+logs/
+
+# ===== OS =====
+.DS_Store
+Thumbs.db

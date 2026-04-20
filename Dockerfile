@@ -1,25 +1,25 @@
 FROM python:3.11-slim
 
+# Sécurité : ne pas tourner en root
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+
 WORKDIR /app
 
-# Copier les fichiers de dépendances
+# Copier uniquement les dépendances en premier (cache Docker optimisé)
 COPY requirements.txt ./
-
-# Installer les dépendances
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copier le code source et le script de démarrage
+# Copier le code source (sans .env grâce au .dockerignore)
 COPY src/ ./src/
 COPY start.sh ./
 
-# Rendre le script exécutable
 RUN chmod +x start.sh
 
-# Ajouter src au PYTHONPATH
 ENV PYTHONPATH=/app/src
 
-# Exposer le port (Railway assignera automatiquement un port)
+# Passer à l'utilisateur non-root
+USER appuser
+
 EXPOSE 8000
 
-# Commande pour démarrer le serveur HTTP
 CMD ["./start.sh"]
