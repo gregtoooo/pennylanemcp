@@ -511,7 +511,7 @@ ALL_TOOLS = [
             }
         }
     },
-{
+    {
         "name": "pennylane_upload_file_attachment",
         "description": "Upload un fichier PDF vers Pennylane. Retourne un file_attachment_id à utiliser dans les endpoints d'import. Fournir soit file_url (URL publique) soit file_base64 (contenu base64).",
         "inputSchema": {
