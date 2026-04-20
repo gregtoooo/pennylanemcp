@@ -100,3 +100,32 @@ async def update_supplier(
         **kwargs: Champs à mettre à jour (name, emails, iban, etc.)
     """
     return await client.put(f"suppliers/{supplier_id}", kwargs)
+
+async def import_supplier_invoice(
+    client: PennylaneClient,
+    file_attachment_id: int,
+    supplier_id: int,
+    date: str,
+    deadline: str,
+    currency_amount_before_tax: str,
+    currency_tax: str,
+    currency_amount: str,
+    invoice_lines: list[dict[str, Any]],
+    currency: str = "EUR",
+) -> dict[str, Any]:
+    """
+    Importe une facture fournisseur à partir d'un PDF déjà uploadé.
+    La somme des currency_amount des lignes doit égaler currency_amount total.
+    """
+    data = {
+        "file_attachment_id": file_attachment_id,
+        "supplier_id": supplier_id,
+        "date": date,
+        "deadline": deadline,
+        "currency_amount_before_tax": currency_amount_before_tax,
+        "currency_tax": currency_tax,
+        "currency_amount": currency_amount,
+        "currency": currency,
+        "invoice_lines": invoice_lines,
+    }
+    return await client.post("supplier_invoices/import", data)    

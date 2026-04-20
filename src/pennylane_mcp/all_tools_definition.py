@@ -511,4 +511,97 @@ ALL_TOOLS = [
             }
         }
     }
+{
+        "name": "pennylane_upload_file_attachment",
+        "description": "Upload un fichier PDF vers Pennylane. Retourne un file_attachment_id à utiliser dans les endpoints d'import. Fournir soit file_url (URL publique) soit file_base64 (contenu base64).",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "filename": {"type": "string", "description": "Nom du fichier (ex: 'facture.pdf')", "default": "invoice.pdf"},
+                "file_url": {"type": "string", "description": "URL publique du PDF à télécharger et uploader"},
+                "file_base64": {"type": "string", "description": "Contenu du PDF encodé en base64"}
+            }
+        }
+    },
+    {
+        "name": "pennylane_import_customer_invoice",
+        "description": "Importe une facture client depuis un PDF uploadé (file_attachment_id). Utiliser après pennylane_upload_file_attachment.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "file_attachment_id": {"type": "integer", "description": "ID retourné par upload_file_attachment"},
+                "customer_id": {"type": "integer", "description": "ID du client"},
+                "date": {"type": "string", "description": "Date de facture (YYYY-MM-DD)"},
+                "deadline": {"type": "string", "description": "Date limite de paiement (YYYY-MM-DD)"},
+                "currency_amount_before_tax": {"type": "string", "description": "Total HT (ex: '100.00')"},
+                "currency_tax": {"type": "string", "description": "Total TVA (ex: '20.00')"},
+                "currency_amount": {"type": "string", "description": "Total TTC (ex: '120.00')"},
+                "invoice_lines": {
+                    "type": "array",
+                    "description": "Lignes de facture",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "ledger_account_id": {"type": "integer", "description": "ID compte général (optionnel)"},
+                            "currency_amount": {"type": "string", "description": "Montant TTC de la ligne"},
+                            "currency_tax": {"type": "string", "description": "TVA de la ligne"},
+                            "quantity": {"type": "number", "description": "Quantité"},
+                            "raw_currency_unit_price": {"type": "string", "description": "Prix unitaire HT"},
+                            "unit": {"type": "string", "description": "Unité (ex: 'jour', 'unité')"},
+                            "vat_rate": {"type": "string", "description": "Code TVA (ex: FR_200, FR_100, FR_055, exempt)"}
+                        }
+                    }
+                },
+                "currency": {"type": "string", "description": "Devise", "default": "EUR"}
+            },
+            "required": ["file_attachment_id", "customer_id", "date", "deadline",
+                         "currency_amount_before_tax", "currency_tax", "currency_amount", "invoice_lines"]
+        }
+    },
+    {
+        "name": "pennylane_import_supplier_invoice",
+        "description": "Importe une facture fournisseur depuis un PDF uploadé (file_attachment_id). Utiliser après pennylane_upload_file_attachment.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "file_attachment_id": {"type": "integer", "description": "ID retourné par upload_file_attachment"},
+                "supplier_id": {"type": "integer", "description": "ID du fournisseur"},
+                "date": {"type": "string", "description": "Date de facture (YYYY-MM-DD)"},
+                "deadline": {"type": "string", "description": "Date limite de paiement (YYYY-MM-DD)"},
+                "currency_amount_before_tax": {"type": "string", "description": "Total HT (ex: '100.00')"},
+                "currency_tax": {"type": "string", "description": "Total TVA (ex: '20.00')"},
+                "currency_amount": {"type": "string", "description": "Total TTC (ex: '120.00')"},
+                "invoice_lines": {
+                    "type": "array",
+                    "description": "Lignes de facture fournisseur",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "ledger_account_id": {"type": "integer", "description": "ID compte général (optionnel)"},
+                            "currency_amount": {"type": "string", "description": "Montant TTC de la ligne"},
+                            "currency_tax": {"type": "string", "description": "TVA de la ligne"},
+                            "vat_rate": {"type": "string", "description": "Code TVA (ex: FR_200, FR_100, FR_055, exempt)"}
+                        }
+                    }
+                },
+                "currency": {"type": "string", "description": "Devise", "default": "EUR"}
+            },
+            "required": ["file_attachment_id", "supplier_id", "date", "deadline",
+                         "currency_amount_before_tax", "currency_tax", "currency_amount", "invoice_lines"]
+        }
+    },
+    {
+        "name": "pennylane_create_invoice_from_quote",
+        "description": "Crée une facture client à partir d'un devis existant. La facture hérite de toutes les données du devis (client, lignes, montants).",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "quote_id": {"type": "integer", "description": "ID du devis à convertir"},
+                "draft": {"type": "boolean", "description": "true = brouillon modifiable, false = facture finalisée", "default": True},
+                "external_reference": {"type": "string", "description": "Référence externe unique (optionnel)"},
+                "customer_invoice_template_id": {"type": "integer", "description": "ID du template de facture (optionnel)"}
+            },
+            "required": ["quote_id", "draft"]
+        }
+    },
 ]

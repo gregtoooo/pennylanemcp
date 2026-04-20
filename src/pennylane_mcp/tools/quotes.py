@@ -138,3 +138,28 @@ async def add_quote_appendix(
         "L'upload de fichiers nécessite une implémentation spéciale avec multipart/form-data. "
         "Cette fonctionnalité sera ajoutée dans une version future."
     )
+async def create_invoice_from_quote(
+    client: PennylaneClient,
+    quote_id: int,
+    draft: bool = True,
+    external_reference: str | None = None,
+    customer_invoice_template_id: int | None = None,
+) -> dict[str, Any]:
+    """
+    Crée une facture client à partir d'un devis existant.
+    La facture hérite de toutes les données du devis (client, lignes, montants, etc.).
+    """
+    data: dict[str, Any] = {
+        "quote_id": quote_id,
+        "draft": draft,
+    }
+    if external_reference:
+        data["external_reference"] = external_reference
+    if customer_invoice_template_id:
+        data["customer_invoice_template_id"] = customer_invoice_template_id
+
+    return await client.post_with_params(
+        "customer_invoices/create_from_quote",
+        data,
+        params={"use_2026_api_changes": "true"},
+    )

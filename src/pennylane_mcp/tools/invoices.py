@@ -130,3 +130,32 @@ async def categorize_invoice(
     """
     endpoint = f"{invoice_type}_invoices/{invoice_id}/categories"
     return await client.put(endpoint, {"categories": categories})
+
+    async def import_customer_invoice(
+    client: PennylaneClient,
+    file_attachment_id: int,
+    customer_id: int,
+    date: str,
+    deadline: str,
+    currency_amount_before_tax: str,
+    currency_tax: str,
+    currency_amount: str,
+    invoice_lines: list[dict[str, Any]],
+    currency: str = "EUR",
+) -> dict[str, Any]:
+    """
+    Importe une facture client à partir d'un PDF déjà uploadé.
+    La somme des currency_amount des lignes doit égaler currency_amount total.
+    """
+    data = {
+        "file_attachment_id": file_attachment_id,
+        "customer_id": customer_id,
+        "date": date,
+        "deadline": deadline,
+        "currency_amount_before_tax": currency_amount_before_tax,
+        "currency_tax": currency_tax,
+        "currency_amount": currency_amount,
+        "currency": currency,
+        "invoice_lines": invoice_lines,
+    }
+    return await client.post("customer_invoices/import", data)

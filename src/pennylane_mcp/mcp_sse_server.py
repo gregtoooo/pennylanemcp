@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import logging
 
 from .client import PennylaneClient
-from .tools import invoices, customers, quotes, transactions, accounting, suppliers, journals
+from .tools import invoices, customers, quotes, transactions, accounting, suppliers, journals, attachments
 from .all_tools_definition import ALL_TOOLS
 
 logging.basicConfig(level=logging.INFO)
@@ -271,6 +271,18 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> str:
             result = await journals.list_fiscal_years(pennylane_client, 
                                                      limit=arguments.get("limit", 20),
                                                      page=arguments.get("page", 1))
+        
+        elif name == "pennylane_upload_file_attachment":
+        result = await attachments.upload_file_attachment(pennylane_client, **arguments)
+
+        elif name == "pennylane_import_customer_invoice":
+        result = await invoices.import_customer_invoice(pennylane_client, **arguments)
+
+        elif name == "pennylane_import_supplier_invoice":
+        result = await suppliers.import_supplier_invoice(pennylane_client, **arguments)
+
+        elif name == "pennylane_create_invoice_from_quote":
+        result = await quotes.create_invoice_from_quote(pennylane_client, **arguments)
         
         else:
             return json.dumps({"error": f"Unknown tool: {name}"})
