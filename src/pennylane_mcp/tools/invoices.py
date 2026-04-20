@@ -131,7 +131,7 @@ async def categorize_invoice(
     endpoint = f"{invoice_type}_invoices/{invoice_id}/categories"
     return await client.put(endpoint, {"categories": categories})
 
-    async def import_customer_invoice(
+async def import_customer_invoice(
     client: PennylaneClient,
     file_attachment_id: int,
     customer_id: int,
